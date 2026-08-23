@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import OfferCard from './OfferCard'
 
-const HAPPY_HOUR_URL = 'http://localhost:3000/happyhour'
+const HAPPY_HOUR_URL = 'https://bar-admin.onrender.com/happyhour'
 
 export default function HappyHour({ products = [] }) {
   const [offers, setOffers] = useState([])

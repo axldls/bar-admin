@@ -21,7 +21,7 @@ export default function ProductForm({ categories = [], onSave, initialData, onCa
     setError('')
 
     try {
-      const response = await fetch('http://localhost:3000/productos', {
+      const response = await fetch('https://bar-admin.onrender.com/productos', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form)
@@ -34,7 +34,7 @@ export default function ProductForm({ categories = [], onSave, initialData, onCa
       setForm({ name: '', shortDesc: '', price: '', image: '', category: '' })
     } catch (error) {
       console.error(error)
-      setError('No se pudo guardar el producto. Verifica que la API esté ejecutándose en el puerto 3000.')
+      setError('No se pudo guardar el producto. Verifica que la API pública esté disponible.')
     } finally {
       setSaving(false)
     }
