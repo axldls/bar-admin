@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Menú - Bar</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <h1 class="logo">Bar</h1>
+      <nav class="main-nav">
+        <ul>
+          <li><a href="#" data-cat="tragos">Tragos</a></li>
+          <li><a href="#" data-cat="cervezas">Cervezas</a></li>
+          <li><a href="#" data-cat="bebidas">Otras bebidas</a></li>
+          <li><a href="#" data-cat="comidas">Comidas</a></li>
+          <li><a href="#" data-cat="picadas">Picadas</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container main">
+    <section id="tragos" class="category">
+      <h2 class="category-title">Tragos</h2>
+      <div class="items" data-category="tragos"></div>
+    </section>
+
+    <section id="cervezas" class="category">
+      <h2 class="category-title">Cervezas</h2>
+      <div class="items" data-category="cervezas"></div>
+    </section>
+
+    <section id="bebidas" class="category">
+      <h2 class="category-title">Otras bebidas</h2>
+      <div class="items" data-category="bebidas"></div>
+    </section>
+
+    <section id="comidas" class="category">
+      <h2 class="category-title">Comidas</h2>
+      <div class="items" data-category="comidas"></div>
+    </section>
+
+    <section id="picadas" class="category">
+      <h2 class="category-title">Picadas</h2>
+      <div class="items" data-category="picadas"></div>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
