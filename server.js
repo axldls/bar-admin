@@ -54,15 +54,11 @@ app.get('/ping', async (request, response) => {
 
 app.get('/productos', async (request, response) => {
 	try {
-		const result = await pool.query(`
-			SELECT id, nombre AS name, descripcion AS "shortDesc", precio AS price,
-				imagen_url AS image, categoria AS category
-			FROM productos
-			ORDER BY id DESC
-		`);
+		const result = await pool.query('SELECT * FROM productos');
 		response.json(result.rows);
 	} catch (error) {
-		sendDatabaseError(response, error);
+		console.error(error);
+		response.status(500).send('Error en la base de datos');
 	}
 });
 

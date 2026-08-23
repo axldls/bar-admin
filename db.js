@@ -2,8 +2,10 @@ require('dotenv').config();
 
 const { Pool } = require('pg');
 
+const RENDER_DATABASE_URL = 'postgresql://axel123z:elNxCbo4hL6eyMs7AF4MVOaKBNwnC2sO@dpg-da5nsjbm8hqs73db7ea0-a.oregon-postgres.render.com/bar_db_onjb';
+
 const pool = new Pool({
-	connectionString: process.env.DATABASE_URL,
+	connectionString: process.env.DATABASE_URL || RENDER_DATABASE_URL,
 	host: process.env.PGHOST,
 	port: process.env.PGPORT ? Number(process.env.PGPORT) : undefined,
 	database: process.env.PGDATABASE,
@@ -16,9 +18,7 @@ const pool = new Pool({
 	connectionTimeoutMillis: process.env.PGCONNECT_TIMEOUT_MS
 		? Number(process.env.PGCONNECT_TIMEOUT_MS)
 		: 5000,
-	ssl: process.env.NODE_ENV === 'production'
-		? { rejectUnauthorized: false }
-		: undefined,
+	ssl: { rejectUnauthorized: false },
 });
 
 pool.on('error', (error) => {

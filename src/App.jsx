@@ -18,7 +18,11 @@ const PRODUCTS_URL = 'http://localhost:3000/productos'
 
 const normalizeProduct = (product) => ({
   ...product,
-  price: Number(product.price),
+  name: product.name ?? product.nombre,
+  shortDesc: product.shortDesc ?? product.descripcion,
+  price: Number(product.price ?? product.precio),
+  image: product.image ?? product.imagen_url,
+  category: product.category ?? product.categoria,
 })
 
 export default function App() {
