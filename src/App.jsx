@@ -14,7 +14,7 @@ const CATEGORIES = [
   'Restobar'
 ]
 
-const PRODUCTS_URL = 'http://localhost:3000/productos'
+const PRODUCTS_URL = 'https://bar-admin.onrender.com/productos'
 
 const normalizeProduct = (product) => ({
   ...product,
@@ -28,9 +28,9 @@ const normalizeProduct = (product) => ({
 export default function App() {
   const [view, setView] = useState('Productos')
   const [user, setUser] = useState(null)
-  const [products, setProducts] = useState([])
-  const [loadingProducts, setLoadingProducts] = useState(true)
-  const [productsError, setProductsError] = useState('')
+  const [data, setData] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(false)
   const [editing, setEditing] = useState(null)
   const [filter, setFilter] = useState('')
   const mainRef = useRef()
@@ -38,36 +38,38 @@ export default function App() {
   useEffect(() => {
     const controller = new AbortController()
 
-    fetch(PRODUCTS_URL, { signal: controller.signal })
-      .then((response) => {
-        if (!response.ok) throw new Error(`No se pudieron cargar los productos (${response.status})`)
-        return response.json()
-      })
-      .then((data) => {
-        setProducts(data.map(normalizeProduct))
-        setProductsError('')
-      })
-      .catch((error) => {
-        if (error.name !== 'AbortError') setProductsError(error.message)
-      })
-      .finally(() => setLoadingProducts(false))
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch(PRODUCTS_URL, { signal: controller.signal })
+        if (!response.ok) throw new Error(`HTTP ${response.status}`)
+
+        const products = await response.json()
+        setData(products.map(normalizeProduct))
+      } catch (fetchError) {
+        if (fetchError.name !== 'AbortError') setError(true)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchProducts()
 
     return () => controller.abort()
   }, [])
 
   const addProduct = (p) => {
-    setProducts((s) => [normalizeProduct(p), ...s])
+    setData((s) => [normalizeProduct(p), ...s])
     setEditing(null)
   }
 
   const updateProduct = (updated) => {
-    setProducts((s) => s.map((p) => (p.id === updated.id ? updated : p)))
+    setData((s) => s.map((p) => (p.id === updated.id ? updated : p)))
     setEditing(null)
   }
 
   const removeProduct = (id) => {
     if (!confirm('¿Eliminar producto?')) return
-    setProducts((s) => s.filter((p) => p.id !== id))
+    setData((s) => s.filter((p) => p.id !== id))
   }
 
   const startEdit = (product) => {
@@ -87,7 +89,7 @@ export default function App() {
     }, 80)
   }
 
-  const filtered = filter ? products.filter((p) => p.category === filter) : products
+  const filtered = filter ? data.filter((p) => p.category === filter) : data
 
   // si no está logueado, mostrar pantalla de login
   if (!user) {
@@ -103,10 +105,10 @@ export default function App() {
       <Sidebar onNavigate={(v) => setView(v)} activeView={view} />
 
       <div className="main-content" ref={mainRef}>
-        <Header totalProducts={products.length} salesToday={124.5} onAdd={onAddClick} onLogout={() => setUser(null)} />
+        <Header totalProducts={data.length} salesToday={124.5} onAdd={onAddClick} onLogout={() => setUser(null)} />
 
         {view === 'Ofertas' ? (
-          <Offers products={products} />
+          <Offers products={data} />
         ) : (
           <>
             <div className="filters">
@@ -127,8 +129,8 @@ export default function App() {
                 <div className="label">Agregar Nuevo Producto</div>
               </div>
 
-              {loadingProducts && <p>Cargando productos...</p>}
-              {productsError && <p role="alert">{productsError}</p>}
+              {loading && <p>Cargando productos...</p>}
+              {error && <p role="alert">Error al cargar productos</p>}
               {filtered.map((p) => (
                 <ProductCard key={p.id} product={p} onEdit={() => startEdit(p)} onDelete={() => removeProduct(p.id)} />
               ))}
