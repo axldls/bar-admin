@@ -2,8 +2,8 @@
   "name": "bar-dashboard",
   "version": "0.1.0",
   "private": true,
-  "repository": "https://github.com/axldls/bar-admin",
-  "homepage": "https://github.com/axldls/bar-admin",
+  "homepage": "https://axldls.github.io/bar-admin",
+
   "scripts": {
     "dev": "vite",
     "server": "node server.js",
