@@ -27,14 +27,17 @@ export default function ProductForm({ categories = [], onSave, initialData, onCa
         body: JSON.stringify(form)
       })
 
-      if (!response.ok) throw new Error('No se pudo guardar el producto')
+      const result = await response.json().catch(() => null)
+      if (!response.ok) {
+        throw new Error(result?.error || `Error HTTP ${response.status}`)
+      }
 
-      const saved = await response.json()
+      const saved = result
       onSave(saved)
       setForm({ name: '', shortDesc: '', price: '', image: '', category: '' })
     } catch (error) {
       console.error(error)
-      setError('No se pudo guardar el producto. Verifica que la API pública esté disponible.')
+      setError(`No se pudo guardar el producto: ${error.message}`)
     } finally {
       setSaving(false)
     }

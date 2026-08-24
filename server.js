@@ -1,4 +1,6 @@
 const express = require('express');
+const fs = require('fs');
+const path = require('path');
 const pool = require('./db');
 
 const app = express();
@@ -210,9 +212,25 @@ app.use((error, request, response, next) => {
 	next(error);
 });
 
-const server = app.listen(port, () => {
-	console.log(`API escuchando en http://localhost:${port}`);
-});
+const initializeDatabase = async () => {
+	const schema = fs.readFileSync(path.join(__dirname, 'schema.sql'), 'utf8');
+	await pool.query(schema);
+	console.log('Base de datos inicializada');
+};
+
+let server;
+initializeDatabase()
+	.then(() => {
+		server = app.listen(port, () => {
+			console.log(`API escuchando en http://localhost:${port}`);
+		});
+	})
+	.catch((error) => {
+		console.error('No se pudo inicializar la base de datos:', error);
+		server = app.listen(port, () => {
+			console.log(`API escuchando en http://localhost:${port} sin base de datos`);
+		});
+	});
 
 const shutdown = () => {
 	server.close(() => {
