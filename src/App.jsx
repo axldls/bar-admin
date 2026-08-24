@@ -31,6 +31,8 @@ export default function App() {
   const [data, setData] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
+  const [deleteError, setDeleteError] = useState('')
+  const [deletingId, setDeletingId] = useState(null)
   const [editing, setEditing] = useState(null)
   const [filter, setFilter] = useState('')
   const mainRef = useRef()
@@ -67,9 +69,23 @@ export default function App() {
     setEditing(null)
   }
 
-  const removeProduct = (id) => {
+  const removeProduct = async (id) => {
     if (!confirm('¿Eliminar producto?')) return
-    setData((s) => s.filter((p) => p.id !== id))
+    setDeletingId(id)
+    setDeleteError('')
+
+    try {
+      const response = await fetch(`${PRODUCTS_URL}/${id}`, { method: 'DELETE' })
+      const result = await response.json().catch(() => null)
+      if (!response.ok) throw new Error(result?.error || `Error HTTP ${response.status}`)
+
+      setData((s) => s.filter((p) => p.id !== id))
+    } catch (deleteFetchError) {
+      console.error(deleteFetchError)
+      setDeleteError(`No se pudo eliminar el producto: ${deleteFetchError.message}`)
+    } finally {
+      setDeletingId(null)
+    }
   }
 
   const startEdit = (product) => {
@@ -131,8 +147,9 @@ export default function App() {
 
               {loading && <p>Cargando productos...</p>}
               {error && <p role="alert">Error al cargar productos</p>}
+              {deleteError && <p role="alert">{deleteError}</p>}
               {filtered.map((p) => (
-                <ProductCard key={p.id} product={p} onEdit={() => startEdit(p)} onDelete={() => removeProduct(p.id)} />
+                <ProductCard key={p.id} product={p} onEdit={() => startEdit(p)} onDelete={() => removeProduct(p.id)} deleting={deletingId === p.id} />
               ))}
             </section>
 
